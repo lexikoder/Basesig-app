@@ -13,7 +13,7 @@ import Onboard from "./pages/Onboard";
 import OnboardingPage from "./pages/Onboard";
 import CreatePasswordPage from "./pages/CreatePassword";
 import WelcomePage from "./pages/WelcomePage";
-import Landing from "./pages/landingpage";
+// import Landing from "./pages/landingpage";
 import UseCasesPage from "./pages/Usecase";
 import Dashboard from "./pages/Dashboard";
 import DashboardLayout from "./pages/DashboardLayout";
@@ -69,7 +69,7 @@ return (
           <Route path="/onboard" element={<OnboardingPage/>}/>
           <Route path="/createpassword" element={<CreatePasswordPage/>}/>
           <Route path="/welcome" element={<WelcomePage/>}/>
-          <Route path="/landing" element={<Landing/>}/>
+          {/* <Route path="/landing" element={<Landing/>}/> */}
            <Route path="/usecase" element={<UseCasesPage/>}/>
             <Route path="/dashboard" element={<Dashboard/>}/>
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
