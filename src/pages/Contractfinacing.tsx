@@ -1,8 +1,8 @@
-import React, { useState } from "react";
-import { Button } from "@/components/ui/button"; // Or your own button
+import React, { useEffect, useState } from "react";
+
 import { Link } from "react-router-dom";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Copy, Check } from "lucide-react";
+
+import axios from "axios";
 
 
 // Dummy contract data
@@ -59,11 +59,42 @@ const pendingContracts = [
   },
 ];
 
+interface ContractData {
+  _id: string;
+  contractid: string;
+  documenthash: string;
+  contractname: string;
+  signerid: string;
+  recipientid: string;
+  signerstatus: "signed" | "pending" | "rejected"; // you can extend this
+  recipientstatus: "signed" | "pending" | "rejected";
+  expiresin: string;
+  documenturl: string;
+  requestearlyfundasset: string;
+  paymentstatus: "pending" | "completed" | "failed"; // possible values
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
+  createdat: string;
+  signerTxonchain?: string;
+  recipientTxonchain?: string;
+  completedAt?: string;
+  contractcompleted: boolean;
+}
+
+
+
+
+
+
 export default function ContractFinancingPage() {
     const [open, setOpen] = useState(false);
     // const [open, setOpenPending] = useState(false);
     const [copied, setCopied] = useState(null);
-    const handleCopy = async (text, label) => {
+    const [getallcompleted, setgetallcompleted] = useState<ContractData[]>([]);
+    const [getallcompletedforfinance, setgetallcompletedforfinance] = useState<ContractData[]>([]);
+    const [loading, setLoading] = useState(true);
+    const handleCopy = async (text,label) => {
     try {
       await navigator.clipboard.writeText(text);
       setCopied(label);
@@ -72,6 +103,50 @@ export default function ContractFinancingPage() {
       console.error("Failed to copy:", err);
     }
   };
+
+  useEffect(() => {
+      const fetchUsers = async () => {
+        try {
+          
+
+        
+          const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/contract/getallcompletedusercontract`, {
+            withCredentials: true, // 👈 if backend sends cookies
+          });
+          const res2 = await axios.get(`${import.meta.env.VITE_API_URL}/api/contract/getallcompletedusercontractforfinancing`, {
+            withCredentials: true, // 👈 if backend sends cookies
+          });
+          
+          console.log(res.data.data)
+          console.log(res2.data.data)
+          setgetallcompleted(res.data.data);
+          setgetallcompletedforfinance(res2.data.data)
+        } catch (error) {
+          console.error("Error fetching users:", error);
+        } finally {
+          setLoading(false);
+        }
+      };
+  
+      fetchUsers();
+    }, []);
+  
+   if (loading)
+    return (
+      <div className="flex justify-center items-center h-screen bg-[#0a0a0a]">
+        <div className="relative">
+          {/* Gradient Ring */}
+          <div className="w-12 h-12 rounded-full border-4 border-transparent border-t-pink-500 border-r-orange-400 animate-spin"></div>
+  
+          {/* Center Glow or Text */}
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-full bg-gradient-to-r from-pink-500 to-orange-400 flex items-center justify-center text-white font-bold text-xs">
+              ⚡
+            </div>
+          </div>
+        </div>
+      </div>
+    );
 
   return (
     <>
@@ -92,26 +167,33 @@ export default function ContractFinancingPage() {
           </tr>
         </thead>
         <tbody>
-          {pendingContracts.map((contract, index) => (
+          {getallcompleted.map((contract, index) => (
             <tr key={index} className="hover:bg-[#2a2a2a] transition-all border-b border-gray-700">
-              <td className="py-3 px-4">{contract.id}</td>
+              <td className="py-3 px-4">{contract.contractid}</td>
               <td className="py-3 px-4 flex space-x-2">
-                {contract.signers.map((initials, i) => (
+                
                   <div
-                    key={i}
+                    
                     className="w-8 h-8 rounded-full bg-gradient-to-r from-pink-500 to-orange-400 text-white flex items-center justify-center text-xs font-bold"
                   >
-                    {initials}
+                  UI
                   </div>
-                ))}
+
+                  <div
+                    
+                    className="w-8 h-8 rounded-full bg-gradient-to-r from-pink-500 to-orange-400 text-white flex items-center justify-center text-xs font-bold"
+                  >
+                  IX
+                  </div>
+              
               </td>
-              <td className="py-3 px-4 text-red-300">{contract.Contractdocs}</td>
-              <td className="py-3 px-4 text-red-300">{contract.createdAt}</td>
+              <td className="py-3 px-4 text-red-300">{contract.contractname}</td>
+              <td className="py-3 px-4 text-red-300">{contract.createdat}</td>
               <td className="py-3 px-4 text-red-300">{contract.completedAt}</td>
               
               <td className="py-3 px-4">
                 <Link
-                        to="/dashboard/contract-financing/apply"
+                        to={`/dashboard/contract-financing/apply/${contract.contractid}`}
                         className="inline-block px-5 py-2.5 rounded-lg bg-gradient-to-r from-pink-500 to-orange-400 text-white font-medium shadow-md transition-all hover:opacity-90 hover:shadow-lg hover:scale-[1.02]"
                       >Apply for early payment</Link>
                 {/* <Button
@@ -123,7 +205,7 @@ export default function ContractFinancingPage() {
               </td>
             </tr>
           ))}
-          {pendingContracts.length === 0 && (
+          {getallcompleted.length === 0 && (
             <tr>
               <td className="text-center text-gray-500 py-6" colSpan={5}>
                 No contracts yet.
@@ -134,72 +216,7 @@ export default function ContractFinancingPage() {
       </table>
     </div>
 
-    {/* DIALOG - reuse or add another */}
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent className="max-w-5xl max-h-[80vh] overflow-auto bg-[#0f0f0f] text-white">
-        <DialogHeader className="mb-4">
-          <DialogTitle className="text-white">Signed Contract Onchain</DialogTitle>
-        </DialogHeader>
 
-        <div className="bg-[#1a1a1a] border border-gray-700 rounded-lg p-6 text-gray-300">
-          {activities.length === 0 ? (
-            <p className="text-gray-500 text-sm">No recent activity yet.</p>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="min-w-full border-collapse text-sm">
-                <thead>
-                  <tr className="bg-[#232323] text-gray-300 text-left">
-                    <th className="py-3 px-4 border-b border-gray-700">Transaction Hash</th>
-                    <th className="py-3 px-4 border-b border-gray-700">Contract ID</th>
-                    <th className="py-3 px-4 border-b border-gray-700">Email</th>
-                    <th className="py-3 px-4 border-b border-gray-700">Document Hash</th>
-                    <th className="py-3 px-4 border-b border-gray-700">Document Name</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {activities.map((activity, index) => (
-                    <tr key={index} className="hover:bg-[#2a2a2a] transition-all border-b border-gray-700">
-                      <td className="py-3 px-4 text-pink-400 truncate max-w-[200px]">
-                        <span className="truncate max-w-[180px] text-pink-400">
-                          {activity.transactionHash}
-                        </span>
-                        <button
-                          onClick={() => handleCopy(activity.transactionHash, `tx-${index}`)}
-                          className="p-1 hover:text-pink-400 transition"
-                          title="Copy"
-                        >
-                          {copied === `tx-${index}` ? (
-                            <Check size={16} className="text-green-400" />
-                          ) : (
-                            <Copy size={16} />
-                          )}
-                        </button>
-                      </td>
-                      <td className="py-3 px-4">{activity.contractId}</td>
-                      <td className="py-3 px-4">{activity.email}</td>
-                      <td className="py-3 px-4 truncate max-w-[200px]">{activity.documentHash}</td>
-                      <td className="py-3 px-4">{activity.documentName}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-          <br />
-          Contract Document:
-          <br />
-          <Button
-                            size="sm"
-                            variant="outline"
-                            className="bg-gradient-to-r from-pink-500 to-orange-400 text-white hover:opacity-90" 
-                            onClick={() => setOpen(true)}
-                          >
-                            View Docs
-                          </Button>
-        </div>
-      </DialogContent>
-     
-    </Dialog>
 
   <br />
   <br />
@@ -227,26 +244,32 @@ export default function ContractFinancingPage() {
           </tr>
         </thead>
         <tbody>
-          {pendingContracts.map((contract, index) => (
+          {getallcompletedforfinance.map((contract, index) => (
             <tr key={index} className="hover:bg-[#2a2a2a] transition-all border-b border-gray-700">
-              <td className="py-3 px-4">{contract.id}</td>
+              <td className="py-3 px-4">{contract.contractid}</td>
               <td className="py-3 px-4 flex space-x-2">
-                {contract.signers.map((initials, i) => (
+                
                   <div
-                    key={i}
+                    
                     className="w-8 h-8 rounded-full bg-gradient-to-r from-pink-500 to-orange-400 text-white flex items-center justify-center text-xs font-bold"
                   >
-                    {initials}
+                    UI
                   </div>
-                ))}
+                  <div
+                    
+                    className="w-8 h-8 rounded-full bg-gradient-to-r from-pink-500 to-orange-400 text-white flex items-center justify-center text-xs font-bold"
+                  >
+                    XI
+                  </div>
+                
               </td>
-              <td className="py-3 px-4 text-red-300">{contract.Contractdocs}</td>
-              <td className="py-3 px-4 text-red-300">{contract.createdAt}</td>
+              <td className="py-3 px-4 text-red-300">{contract.contractname}</td>
+              <td className="py-3 px-4 text-red-300">{contract.createdat}</td>
               <td className="py-3 px-4 text-red-300">{contract.completedAt}</td>
               
               <td className="py-3 px-4">
                 <Link
-                        to="/dashboard/contract-financing/finance-request"
+                        to={`/dashboard/contract-financing/finance-request/${contract.contractid}`}
                         className="inline-block px-5 py-2.5 rounded-lg bg-gradient-to-r from-pink-500 to-orange-400 text-white font-medium shadow-md transition-all hover:opacity-90 hover:shadow-lg hover:scale-[1.02]"
                       >Finance payment request</Link>
                 {/* <Button
@@ -258,7 +281,7 @@ export default function ContractFinancingPage() {
               </td>
             </tr>
           ))}
-          {pendingContracts.length === 0 && (
+          {getallcompletedforfinance.length === 0 && (
             <tr>
               <td className="text-center text-gray-500 py-6" colSpan={5}>
                 No contracts yet.
@@ -269,74 +292,7 @@ export default function ContractFinancingPage() {
       </table>
     </div>
 
-    {/* DIALOG - reuse or add another */}
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent className="max-w-5xl max-h-[80vh] overflow-auto bg-[#0f0f0f] text-white">
-        <DialogHeader className="mb-4">
-          <DialogTitle className="text-white">Signed Contract Onchain</DialogTitle>
-        </DialogHeader>
-
-        <div className="bg-[#1a1a1a] border border-gray-700 rounded-lg p-6 text-gray-300">
-          {activities.length === 0 ? (
-            <p className="text-gray-500 text-sm">No recent activity yet.</p>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="min-w-full border-collapse text-sm">
-                <thead>
-                  <tr className="bg-[#232323] text-gray-300 text-left">
-                    <th className="py-3 px-4 border-b border-gray-700">Transaction Hash</th>
-                    <th className="py-3 px-4 border-b border-gray-700">Contract ID</th>
-                    <th className="py-3 px-4 border-b border-gray-700">Email</th>
-                    <th className="py-3 px-4 border-b border-gray-700">Document Hash</th>
-                    <th className="py-3 px-4 border-b border-gray-700">Document Name</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {activities.map((activity, index) => (
-                    <tr key={index} className="hover:bg-[#2a2a2a] transition-all border-b border-gray-700">
-                      <td className="py-3 px-4 text-pink-400 truncate max-w-[200px]">
-                        <span className="truncate max-w-[180px] text-pink-400">
-                          {activity.transactionHash}
-                        </span>
-                        <button
-                          onClick={() => handleCopy(activity.transactionHash, `tx-${index}`)}
-                          className="p-1 hover:text-pink-400 transition"
-                          title="Copy"
-                        >
-                          {copied === `tx-${index}` ? (
-                            <Check size={16} className="text-green-400" />
-                          ) : (
-                            <Copy size={16} />
-                          )}
-                        </button>
-                      </td>
-                      <td className="py-3 px-4">{activity.contractId}</td>
-                      <td className="py-3 px-4">{activity.email}</td>
-                      <td className="py-3 px-4 truncate max-w-[200px]">{activity.documentHash}</td>
-                      <td className="py-3 px-4">{activity.documentName}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-          <br />
-          Contract Document:
-          <br />
-          <Button
-                            size="sm"
-                            variant="outline"
-                            className="bg-gradient-to-r from-pink-500 to-orange-400 text-white hover:opacity-90" 
-                            onClick={() => setOpen(true)}
-                          >
-                            View Docs
-                          </Button>
-        </div>
-      </DialogContent>
-     
-    </Dialog>
-
-
+   
     
   
 

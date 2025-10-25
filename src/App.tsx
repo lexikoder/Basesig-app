@@ -29,6 +29,15 @@ import FinanacepaymentRequest from "./pages/FinanacepaymentRequest";
 import FinancedpaymentPage from "./pages/FInancedcontracts";
 import MakepaymentPage from "./pages/makepayment";
 import Makepayment from "./pages/Makepaymentpage";
+import ProtectedRoute from "./pages/ProtectedRoute";
+import { Providers } from "./providers";
+
+
+// import { OnchainKitProvider } from "@coinbase/onchainkit";
+// import { WagmiProvider } from "wagmi";
+// // import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+// import { config } from "./wagmiConfig";
+// import { baseSepolia } from "viem/chains";
 
 const App = () => {
   const [queryClient] = React.useState(() => new QueryClient({
@@ -39,24 +48,33 @@ const App = () => {
     },
   }));
 
+
 return (
+  // <WagmiProvider config={config}>
+  <Providers>
   <QueryClientProvider client={queryClient}>
+    {/* <OnchainKitProvider chain={baseSepolia}  > */}
+    
     <TooltipProvider>
       <Toaster />
       <Sonner />
       <BrowserRouter>
         <Routes>
-          <Route path="/dashboard" element={<DashboardLayout />}>
+          <Route path="/dashboard" element={ 
+            <ProtectedRoute>
+            <DashboardLayout />
+            </ProtectedRoute>
+            }>
           <Route index element={<Dashboard />} />
           <Route path="contracts" element={<ContractsPage />} />
           <Route path="viewmoredocs" element={<DocsViewmore/>} />
           <Route path="Signcontractonchain" element={<SignContractPage/>} />
-          <Route path="contracts/signonchain" element={<SignOnchainsecond />} />
+          <Route path="contracts/signonchain/:contractid" element={<SignOnchainsecond />} />
            <Route path="wallet" element={<WalletPage />} />
            <Route path="contract-financing" element={<ContractFinancingPage/>} />
-           <Route path="contract-financing/finance-request" element={<FinanacepaymentRequest/>} />
+           <Route path="contract-financing/finance-request/:contractid" element={<FinanacepaymentRequest/>} />
            <Route path="financed-contract" element={<FinancedpaymentPage/>} />
-           <Route path="contract-financing/apply" element={<Applyforearlypayment/>} />
+           <Route path="contract-financing/apply/:contractid" element={<Applyforearlypayment/>} />
            <Route path="make-payment" element={<MakepaymentPage/>} />
            <Route path="make-payment/pay" element={<Makepayment/>} />
            
@@ -89,8 +107,30 @@ return (
         {/* </Routes> */}
       </BrowserRouter>
     </TooltipProvider>
+    {/* </OnchainKitProvider> */}
   </QueryClientProvider>
+  </Providers>
+  
   );
 };
 
 export default App;
+
+// // import { OnchainProvider } from "@coinbase/onchainkit";
+// // import { WagmiProvider } from "wagmi";
+// // import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+// // import { config } from "./wagmiConfig";
+
+// const queryClient = new QueryClient();
+
+// export default function App() {
+//   return (
+//     <WagmiProvider config={config}>
+//       <QueryClientProvider client={queryClient}>
+//         <OnchainProvider>
+//           <MyApp />
+//         </OnchainProvider>
+//       </QueryClientProvider>
+//     </WagmiProvider>
+//   );
+// }

@@ -22,6 +22,9 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useNavigate } from "react-router-dom"
+import { useState } from "react"
+import axios from "axios";
+
 // import { FcGoogle } from "react-icons/fc"
 // import { FaGithub } from "react-icons/fa"
 
@@ -33,6 +36,8 @@ type FormData = z.infer<typeof formSchema>
 
 export default function Signup() {
   const navigate = useNavigate()
+   const [error, setError] = useState("");       // 🧩 State to hold error message
+  const [success, setSuccess] = useState("");   // ✅ Optional success message
   const {
     register,
     handleSubmit,
@@ -41,9 +46,42 @@ export default function Signup() {
     resolver: zodResolver(formSchema),
   })
 
-  const onSubmit = (data: FormData) => {
+  // const handleSubmit = async (e) => {
+    
+  // };
+
+
+  const onSubmit = async (data: FormData) => {
     localStorage.setItem("signupEmail", data.email)
-    navigate("/otp")
+    // e.preventDefault();
+    setError("");
+    setSuccess("");
+
+    try {
+      const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/auth/reqotp`, {
+        email:data.email
+      });
+
+      setSuccess("Contract created successfully! 🎉");
+      // console.log("Contract created:", response.data);
+      navigate("/otp",{ state: { email:data.email } })
+
+    } catch (err) {
+      console.error("Error creating contract:", err);
+
+      // 👇 Display a friendly message to the user
+      if (err.response) {
+        // Server responded with an error
+        setError(err.response.data.error || "Something went wrong on the server.");
+      } else if (err.request) {
+        // No response from the server
+        setError("No response from the server. Please check your connection.");
+      } else {
+        // Request setup issue
+        setError("Error setting up request. Try again later.");
+      }
+    }
+    
   }
 
   return (
@@ -55,7 +93,7 @@ export default function Signup() {
           <div className="flex justify-center">
           <div className="flex items-center space-x-2 mb-6">
             <div className="w-6 h-6 bg-gradient-to-r from-pink-500 to-orange-500 rounded-lg"></div>
-            <h1 className="text-xl font-semibold">Basesign</h1>
+            <h1 className="text-xl font-semibold">basesig</h1>
           </div>
           </div>
 
@@ -99,7 +137,8 @@ export default function Signup() {
                 </p>
               )}
             </div>
-
+           {error && <p className="mt-4 text-red-400">{error}</p>}
+      {success && <p className="mt-4 text-green-400">{success}</p>}
             {/* <p className="text-gray-400 text-xs">
               By continuing, you agree to the{" "}
               <a href="#" className="underline">
@@ -113,7 +152,7 @@ export default function Signup() {
             </p> */}
 
             <Button
-              type="submit" onClick={() => navigate("/otp")}
+              type="submit" 
               className="w-full bg-white text-black hover:bg-gray-200"
             >
               Continue

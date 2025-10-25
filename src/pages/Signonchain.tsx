@@ -5,6 +5,15 @@ import { Input } from "@/components/ui/input"; // You can create or import this
 import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Document, Page, pdfjs } from 'react-pdf';
+import axios from "axios";
+import {useAccount, useWriteContract,useWaitForTransactionReceipt,useSendTransaction } from 'wagmi'
+import abi from "../Abi.json";
+import { Abi } from "viem";
+import { baseSepolia } from "viem/chains";
+interface DataType {
+  contractid: string;
+  documenthash: string;
+}
 
 export default function SignContractPage() {
   const [file, setFile] = useState(null);
@@ -12,17 +21,134 @@ export default function SignContractPage() {
   const [contractname, setContractName] = useState("");
   const [expiration, setExpiration] = useState("7");
   const [open, setOpen] = useState(false);
-
+  const [open2, setOpen2] = useState(false);
+  const [error, setError] = useState("");       // 🧩 State to hold error message
+  const [success, setSuccess] = useState(false);
+  const [loading, setLoading] = useState(false);
+  // const [datas, setDatas] = useState();
+  const [datas, setDatas] = useState<DataType | null>(null);
+  const {address} = useAccount();
+  const { data: writeData, writeContractAsync } = useWriteContract();
+  const { data: receipt } = useWaitForTransactionReceipt({
+    hash: writeData,
+  });
+console.log(address)
   const handleUpload = (e) => {
     const uploaded = e.target.files[0];
     setFile(uploaded);
+console.log(file)
   };
+  
+  const handleSign = async(e) => {
+  //  
+    // console.log("Signing onchain with:", { file, email, expiration });
+    if (!datas) {
+  console.error("datas is undefined");
+  return;
+}
+      const txhash =     await writeContractAsync(
+      {
+        abi,
+        address: '0x8ecC07507bd71071413EBD6EFab470f9903F158e',
+        functionName: 'signOnchain',
+        args: [
+          email,
+          datas.contractid,
+          datas.documenthash,
+          876103385800,
+          28,
+          "0x5d9f9eb0e7dd60166b5388f74c2ee565c020f26d6afd461f3b7ee17d97dfbd9b",
+          "0x0288e4cfd66199771b39c256599219946840a289f6d39490bbf6f6e5934b43e0"
+        ],
+        chain: baseSepolia,
+        account: address
+      },
+  );
+   console.log("hello")
+   setOpen(true);
+    try {
+      console.log(datas.contractid,
+            writeData)
+   const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/contract/signcontract`, 
+           {
+            contractid:datas.contractid,
+            txOnchain:txhash
+           },
+          //  {headers: { "Content-Type": "multipart/form-data" },
+           {withCredentials: true});
 
-  const handleSign = () => {
-    console.log("Signing onchain with:", { file, email, expiration });
-    setOpen(true);
+      if (res.status === 201) {
+        setSuccess(true); // mark success to display new button
+        // setDatas(res.data.data)
+      }
+    } catch (error) {
+      console.error("POST failed:", error);
+    } finally {
+      setTimeout(() => {
+  setOpen(false);
+  setOpen2(true);
+}, 5000);
+     
+    }
+  
+    
+  }
+
+
+  const Upload = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      const formData = new FormData();
+
+// Append a file
+formData.append("file", file)
+formData.append("contractname", contractname);
+formData.append("recipientemail", email);
+formData.append("expiresin",expiration);
+
+      const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/contract/uploaddoc`, formData,
+           {headers: { "Content-Type": "multipart/form-data" },
+           withCredentials: true});
+
+      if (res.status === 201) {
+        setSuccess(true); // mark success to display new button
+        setDatas(res.data.data)
+      }
+    } catch (error) {
+      console.error("POST failed:", error);
+    } finally {
+      setLoading(false);
+    }
   };
-
+// const Upload = async(e) => {
+//   e.preventDefault();
+//         setError("");
+//         setSuccess("");
+//           try {
+//           const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/contract/uploaddoc`, {
+//           file,
+          
+//           }, {withCredentials: true});
+    
+//         setSuccess("Contract created successfully! 🎉");
+//           // navigate("/dashboard" , { replace: true })
+    
+//         } catch (err) {
+//           console.error("Error creating contract:", err);
+    
+//           // 👇 Display a friendly message to the user
+//           if (err.response) {
+//             // Server responded with an error
+//             setError(err.response.data.error || "Something went wrong on the server.");
+//           } else if (err.request) {
+//             // No response from the server
+//             setError("No response from the server. Please check your connection.");
+//           } else {
+//             // Request setup issue
+//             setError("Error setting up request. Try again later.");
+//           }}
+//         }
   return (
     <div className="min-h-screen bg-[#0f0f0f] text-white p-6">
       <div className="max-w-2xl mx-auto bg-[#1a1a1a] border border-gray-700 rounded-lg p-8 space-y-6">
@@ -113,12 +239,25 @@ export default function SignContractPage() {
           <p className="text-sm text-gray-400 mb-2">
             Sign onchain · Cost: <span className="text-pink-400">0.002 ETH</span>
           </p>
-          <Button
+          {!success ? 
+        <Button
+            onClick={Upload}
+            className="bg-gradient-to-r from-pink-500 to-orange-400 text-white hover:opacity-90"
+          >
+            {loading ? "loading..." : "upload"}
+          </Button>
+          
+       
+      : (
+         <Button
             onClick={handleSign}
             className="bg-gradient-to-r from-pink-500 to-orange-400 text-white hover:opacity-90"
           >
             Sign Onchain
           </Button>
+      )}
+          
+         
         </div>
       </div>
 
@@ -127,10 +266,19 @@ export default function SignContractPage() {
         <DialogContent className="bg-[#1a1a1a] text-white p-6">
           <h3 className="text-lg font-semibold mb-4">Signing in progress...</h3>
           <p className="text-gray-400 text-sm">
-            We're processing your onchain signature. Please confirm in your wallet.
+            We're processing your onchain signature.
           </p>
         </DialogContent>
       </Dialog>
+
+      <Dialog open={open2} onOpenChange={setOpen2}>
+  <DialogContent className="bg-gradient-to-r from-green-500 to-green-700 text-white p-6 rounded-lg shadow-lg">
+    <h3 className="text-lg font-semibold mb-4">Signing successful</h3>
+    <p className="text-green-100 text-sm">
+      You have successfully signed this contract
+    </p>
+  </DialogContent>
+</Dialog>
     </div>
   );
 }

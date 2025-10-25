@@ -57,7 +57,7 @@
 
 
 import { useState } from "react"
-import { useNavigate } from "react-router-dom"
+import { useLocation, useNavigate } from "react-router-dom"
 // import { OTPInput,OTPInputProps ,Otp InputOTPGroup, InputOTPSlot } from "input-otp"
 // import InputOTP from "input-otp";
 import {
@@ -66,17 +66,50 @@ import {
   InputOTPSlot,
 } from "@/components/ui/input-otp"
 import { Button } from "@/components/ui/button"
+import axios from "axios";
 
 export default function OtpPage() {
   const [otp, setOtp] = useState("")
+   const [error, setError] = useState("");       // 🧩 State to hold error message
+  const [success, setSuccess] = useState(""); 
   const navigate = useNavigate()
+  const location = useLocation();
+  const { email } = location.state || {};
   // const email = localStorage.getItem("signupEmail") || ""
 
-  const handleVerify = () => {
-    if (otp.length === 6) {
+  const handleVerify = async(e) => {
+    if (otp.length === 4) {
       // Normally you'd call your backend here to verify OTP
-      console.log("OTP Verified:", otp)
-      navigate("/onboard") // or any next route
+        e.preventDefault();
+    setError("");
+    setSuccess("");
+
+    try {
+      const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/auth/verifyotp`, {
+      email:email,
+      otp:otp
+      });
+
+      setSuccess("Contract created successfully! 🎉");
+      navigate("/onboard",{ state: { email:email } }) 
+      console.log("Contract created:", response.data);
+
+    } catch (err) {
+      console.error("Error creating contract:", err);
+
+      // 👇 Display a friendly message to the user
+      if (err.response) {
+        // Server responded with an error
+        setError(err.response.data.error || "Something went wrong on the server.");
+      } else if (err.request) {
+        // No response from the server
+        setError("No response from the server. Please check your connection.");
+      } else {
+        // Request setup issue
+        setError("Error setting up request. Try again later.");
+      }
+    }
+      // or any next route
     } else {
       alert("Please enter the full 6-digit code.")
     }
@@ -91,7 +124,7 @@ export default function OtpPage() {
          <div className="flex justify-center">
           <div className="flex items-center space-x-2 mb-6 ">
             <div className="w-6 h-6 bg-gradient-to-r from-pink-500 to-orange-500 rounded-lg"></div>
-            <h1 className="text-xl font-semibold">Basesign</h1>
+            <h1 className="text-xl font-semibold">basesig</h1>
           </div>
           </div>
 
@@ -106,12 +139,12 @@ export default function OtpPage() {
           {/* OTP Input */}
           <div className="flex justify-center">
             <InputOTP
-              maxLength={6}
+              maxLength={4}
               value={otp}
               onChange={(val) => setOtp(val)}
             >
               <InputOTPGroup className="flex gap-3">
-                {[0, 1, 2, 3, 4, 5].map((i) => (
+                {[0, 1, 2, 3].map((i) => (
                   <InputOTPSlot
                     key={i}
                     index={i}
@@ -121,6 +154,8 @@ export default function OtpPage() {
               </InputOTPGroup>
             </InputOTP>
           </div>
+          {error && <p className="mt-4 text-red-400">{error}</p>}
+      {success && <p className="mt-4 text-green-400">{success}</p>}
            
 
           {/* Verify Button */}

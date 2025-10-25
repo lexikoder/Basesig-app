@@ -27,7 +27,7 @@ export default function DocsViewmore() {
     <div className="flex min-h-screen bg-[#0f0f0f] text-white">
       {/* Sidebar */}
       {/* <aside className="w-64 bg-[#141414] p-6 border-r border-gray-800">
-        <h1 className="text-2xl font-bold text-white mb-10">BaseSign</h1>
+        <h1 className="text-2xl font-bold text-white mb-10">basesig</h1>
         <nav className="space-y-4 text-gray-400">
           {["Home", "Contracts", "Messenger", "Wallet", "Lend"].map((item) => (
             <div key={item} className="hover:text-pink-500 cursor-pointer">

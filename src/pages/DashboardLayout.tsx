@@ -5,7 +5,7 @@ import {  useLocation } from "react-router-dom";
 import {
   Home,
   FileText,
-  Wallet,
+  // Wallet,
   DollarSign,
   FileCheck,
   HandCoins,
@@ -16,7 +16,7 @@ export default function DashboardLayout() {
    const menuItems = [
     { name: "Home", path: "/dashboard", icon: <Home size={18} /> },
     { name: "Contracts", path: "/dashboard/contracts", icon: <FileText size={18} /> },
-    { name: "Wallet", path: "/dashboard/wallet", icon: <Wallet size={18} /> },
+    // { name: "Wallet", path: "/dashboard/wallet", icon: <Wallet size={18} /> },
     { name: "Contract Financing", path: "/dashboard/contract-financing", icon: <HandCoins size={18} /> },
     { name: "Financed Contracts", path: "/dashboard/financed-contract", icon: <FileCheck size={18} /> },
     { name: "Make Payment", path: "/dashboard/make-payment", icon: <DollarSign size={18} /> },
@@ -30,7 +30,7 @@ export default function DashboardLayout() {
      <aside className="w-64 bg-[#141414] p-6 border-r border-gray-800 min-h-screen">
       <div className="flex justify-center items-center space-x-2 mb-6">
             <div className="w-6 h-6 bg-gradient-to-r from-pink-500 to-orange-500 rounded-lg"></div>
-            <h1 className="text-xl font-semibold">Basesign</h1>
+            <h1 className="text-xl font-semibold">basesig</h1>
           </div>
 
       <nav className="space-y-2">

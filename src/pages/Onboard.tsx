@@ -1,7 +1,8 @@
 import { useState } from "react"
-import { useNavigate } from "react-router-dom"
+import { useLocation, useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import axios from "axios";
 // import countries from "world-countries"
 // import Select from "react-select";  
 // import CountrySelect from "@/components/Countries";
@@ -12,17 +13,37 @@ export default function OnboardingPage() {
   const [lastName, setLastName] = useState("")
   const [role, setRole] = useState("")
   const [country, setCountry] = useState("")
+  const [companyname, setCompanyname] = useState("")
   const [approvedId, setApprovedId] = useState("")
+   const [error, setError] = useState("");       // 🧩 State to hold error message
+  const [success, setSuccess] = useState(""); 
   // const [country, setCountry] = useState("")
-
+  const location = useLocation();
+    const { email } = location.state || {};
 
   const handleOnboarding = () => {
     // firstName && lastName && role && country && approvedId
-    if (firstName && lastName && role  && approvedId) {
+    if (firstName && lastName && role  && approvedId && companyname && country) {
       // Handle the onboarding process, e.g., send data to backend
-      console.log("Onboarding with:", { firstName, lastName, role, country, approvedId })
-      localStorage.setItem("userDetails", JSON.stringify({ firstName, lastName, role, country, approvedId }))
-      navigate("/createpassword") // Navigate to the next step of onboarding
+      // console.log("Onboarding with:", { firstName, lastName, role, country, approvedId })
+        
+
+    
+     
+
+      // setSuccess("Contract created successfully! 🎉");
+     navigate("/createpassword",{ state:  {
+      email,
+      firstName ,
+      lastName ,
+      role ,
+       approvedId ,
+       companyname ,
+        country
+      } })
+      
+      // localStorage.setItem("userDetails", JSON.stringify({ firstName, lastName, role, country, approvedId }))
+       // Navigate to the next step of onboarding
     } else {
       alert("Please fill in all fields.")
     }
@@ -42,7 +63,7 @@ export default function OnboardingPage() {
 
           <div className="flex justify-center items-center space-x-2 mb-6">
             <div className="w-6 h-6 bg-gradient-to-r from-pink-500 to-orange-500 rounded-lg"></div>
-            <h1 className="text-xl font-semibold">Basesign</h1>
+            <h1 className="text-xl font-semibold">basesig</h1>
           </div>
           {/* Title */}
           <div className="space-y-2 text-center">
@@ -100,32 +121,7 @@ export default function OnboardingPage() {
   </select>
 </div>
 
-            {/* Country */}
-            {/* <div>
-              <label className="block text-sm text-gray-400 mb-1">Country</label>
-              <Input
-                type="text"
-                placeholder="Enter your country"
-                value={country}
-                onChange={(e) => setCountry(e.target.value)}
-                className="bg-[#1a1a1a] text-white border-gray-700"
-              />
-            </div> */}
-
-            {/* Country Selector */}
-{/* <div>
-  <label className="block text-sm text-gray-400 mb-1">Country</label>
-  <Select
-    options={formattedCountries}
-    value={formattedCountries.find((c) => c.value === country)}
-    onChange={(selected) => setCountry(selected?.value)}
-    className="text-black"
-    classNamePrefix="select"
-    placeholder="Select your country"
-  />
-</div> */}
-{/* <CountrySelect country={country} setCountry={setCountry} /> */}
-            {/* Approved ID */}
+         
             <div>
               <label className="block text-sm text-gray-400 mb-1">Approved ID</label>
               <Input
@@ -136,7 +132,31 @@ export default function OnboardingPage() {
                 className="bg-[#1a1a1a] text-white border-gray-700"
               />
             </div>
+
+            <div>
+              <label className="block text-sm text-gray-400 mb-1">Company Name</label>
+              <Input
+                type="text"
+                placeholder="Enter company name"
+                value={companyname}
+                onChange={(e) => setCompanyname(e.target.value)}
+                className="bg-[#1a1a1a] text-white border-gray-700"
+              />
+            </div>
+
+             <div>
+              <label className="block text-sm text-gray-400 mb-1">Country</label>
+              <Input
+                type="text"
+                placeholder="Enter country"
+                value={country}
+                onChange={(e) => setCountry(e.target.value)}
+                className="bg-[#1a1a1a] text-white border-gray-700"
+              />
+            </div>
           </div>
+
+          
 
           {/* Continue Button */}
           <Button

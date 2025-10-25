@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button"; // Or your own button
 import { Link } from "react-router-dom";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Copy, Check } from "lucide-react";
+import axios from "axios";
 
 
 // Dummy contract data
@@ -57,10 +58,28 @@ const pendingContracts = [
   },
 ];
 
+interface DataTypepending {
+  
+  contractid:string
+  
+  recipientstatus:string
+  createdat:string
+
+}
+interface DataType {
+  contractid:string
+  
+  recipientstatus:string
+  createdat:string
+  completedAt:string
+}
 export default function ContractsPage() {
     const [open, setOpen] = useState(false);
     // const [open, setOpenPending] = useState(false);
     const [copied, setCopied] = useState(null);
+    const [loading, setLoading] = useState(true);
+     const [pending, setpending] = useState<DataTypepending[]>([]);
+    const [completed, setcompleted] = useState<DataType[]>([]);
     const handleCopy = async (text, label) => {
     try {
       await navigator.clipboard.writeText(text);
@@ -70,6 +89,48 @@ export default function ContractsPage() {
       console.error("Failed to copy:", err);
     }
   };
+
+   useEffect(() => {
+      const fetchUsers = async () => {
+        try {
+        
+          const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/contract/getallrecipientstatuspending`, {
+            withCredentials: true, // 👈 if backend sends cookies
+          });
+          const res2 = await axios.get(`${import.meta.env.VITE_API_URL}/api/contract/getallcompletedusercontract`, {
+            withCredentials: true, // 👈 if backend sends cookies
+          });
+          
+          console.log(res.data.data)
+          console.log(res2.data.data)
+          setpending(res.data.data);
+          setcompleted(res2.data.data)
+        } catch (error) {
+          console.error("Error fetching users:", error);
+        } finally {
+          setLoading(false);
+        }
+      };
+  
+      fetchUsers();
+    }, []);
+  
+   if (loading)
+    return (
+      <div className="flex justify-center items-center h-screen bg-[#0a0a0a]">
+        <div className="relative">
+          {/* Gradient Ring */}
+          <div className="w-12 h-12 rounded-full border-4 border-transparent border-t-pink-500 border-r-orange-400 animate-spin"></div>
+  
+          {/* Center Glow or Text */}
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-full bg-gradient-to-r from-pink-500 to-orange-400 flex items-center justify-center text-white font-bold text-xs">
+              ⚡
+            </div>
+          </div>
+        </div>
+      </div>
+    );
 
   return (
     <>
@@ -89,24 +150,36 @@ export default function ContractsPage() {
           </tr>
         </thead>
         <tbody>
-          {pendingContracts.map((contract, index) => (
+          {pending.map((contract, index) => (
             <tr key={index} className="hover:bg-[#2a2a2a] transition-all border-b border-gray-700">
-              <td className="py-3 px-4">{contract.id}</td>
+              <td className="py-3 px-4">{contract.contractid}</td>
               <td className="py-3 px-4 flex space-x-2">
-                {contract.signers.map((initials, i) => (
+                {/* {contract.signers.map((initials, i) => (
                   <div
                     key={i}
                     className="w-8 h-8 rounded-full bg-gradient-to-r from-pink-500 to-orange-400 text-white flex items-center justify-center text-xs font-bold"
                   >
                     {initials}
                   </div>
-                ))}
+                ))} */}
+                 <div
+                    // key={i}
+                    className="w-8 h-8 rounded-full bg-gradient-to-r from-pink-500 to-orange-400 text-white flex items-center justify-center text-xs font-bold"
+                  >
+                    UI
+                  </div>
+                  <div
+                    // key={i}
+                    className="w-8 h-8 rounded-full bg-gradient-to-r from-pink-500 to-orange-400 text-white flex items-center justify-center text-xs font-bold"
+                  >
+                    XI
+                  </div>
               </td>
-              <td className="py-3 px-4 text-red-300">{contract.status}</td>
-              <td className="py-3 px-4 text-gray-400">{contract.createdAt}</td>
+              <td className="py-3 px-4 text-red-300">{contract.recipientstatus}</td>
+              <td className="py-3 px-4 text-gray-400">{contract.createdat}</td>
               <td className="py-3 px-4">
                 <Link
-                        to="/dashboard/contracts/signonchain"
+                        to={`/dashboard/contracts/signonchain/${contract.contractid}`}
                         className="inline-block px-5 py-2.5 rounded-lg bg-gradient-to-r from-pink-500 to-orange-400 text-white font-medium shadow-md transition-all hover:opacity-90 hover:shadow-lg hover:scale-[1.02]"
                       >Sign OnChain</Link>
                 {/* <Button
@@ -118,7 +191,7 @@ export default function ContractsPage() {
               </td>
             </tr>
           ))}
-          {pendingContracts.length === 0 && (
+          {pending.length === 0 && (
             <tr>
               <td className="text-center text-gray-500 py-6" colSpan={5}>
                 No pending contracts yet.
@@ -130,7 +203,7 @@ export default function ContractsPage() {
     </div>
 
     {/* DIALOG - reuse or add another */}
-    <Dialog open={open} onOpenChange={setOpen}>
+    {/* <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent className="max-w-5xl max-h-[80vh] overflow-auto bg-[#0f0f0f] text-white">
         <DialogHeader className="mb-4">
           <DialogTitle className="text-white">Signed Contract Onchain</DialogTitle>
@@ -194,7 +267,7 @@ export default function ContractsPage() {
         </div>
       </DialogContent>
      
-    </Dialog>
+    </Dialog> */}
 
   <br />
   <br />
@@ -213,21 +286,27 @@ export default function ContractsPage() {
           </tr>
         </thead>
         <tbody>
-          {contracts.map((contract, index) => (
+          {completed.map((contract, index) => (
             <tr key={index} className="hover:bg-[#2a2a2a] transition-all border-b border-gray-700">
-              <td className="py-3 px-4">{contract.id}</td>
+              <td className="py-3 px-4">{contract.contractid}</td>
               <td className="py-3 px-4 flex space-x-2">
-                {contract.signers.map((initials, i) => (
+                {/* {contract.signers.map((initials, i) => ( */}
                   <div
-                    key={i}
+                    // key={i}
                     className="w-8 h-8 rounded-full bg-gradient-to-r from-pink-500 to-orange-400 text-white flex items-center justify-center text-xs font-bold"
                   >
-                    {initials}
+                    UI
                   </div>
-                ))}
+                  <div
+                    // key={i}
+                    className="w-8 h-8 rounded-full bg-gradient-to-r from-pink-500 to-orange-400 text-white flex items-center justify-center text-xs font-bold"
+                  >
+                    XI
+                  </div>
+                {/* ))} */}
               </td>
-              <td className="py-3 px-4 text-green-400">{contract.status}</td>
-              <td className="py-3 px-4 text-gray-400">{contract.createdAt}</td>
+              <td className="py-3 px-4 text-green-400">{"Completed"}</td>
+              <td className="py-3 px-4 text-gray-400">{contract.createdat}</td>
               <td className="py-3 px-4 text-gray-400">{contract.completedAt}</td>
               <td className="py-3 px-4">
                 <Button

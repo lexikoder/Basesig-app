@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Button } from "@/components/ui/button"; // Use your Button component or ShadCN
 import { ArrowRight } from "lucide-react";
 import { ChevronDown, LogOut } from "lucide-react";
@@ -6,7 +6,13 @@ import { Link, Outlet } from "react-router-dom";
 import { useState } from "react";
 import { Document, Page, pdfjs } from 'react-pdf';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { useAccount, useConnect, useDisconnect } from 'wagmi'
+import {useWaitForTransactionReceipt, useWriteContract ,useReadContract,useSendTransaction,useBalance} from 'wagmi';
+import {useCapabilities, useWriteContracts } from "wagmi/experimental";
 import { Copy, Check } from "lucide-react";
+import axios from "axios";
+// import { ConnectButton } from "@coinbase/onchainkit/wallet";
+// import { Wallet, ConnectWallet } from "@coinbase/onchainkit/wallet";
 // // import pdf from "@/assets/ifeanyi.pdf";
 // pdfjs.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
 // // import workerSrc from 'pdfjs-dist/build/pdf.worker.entry';
@@ -58,12 +64,72 @@ const activities = [
   },
 ];
 
+interface DataType {
+  documenthash :string
+  contractid:string
+  contractname :string
+  signerTxonchain:string
+}
 
 export default function Dashboard() {
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const [showAll, setShowAll] = useState(false);
      const [open, setOpen] = useState(false);
      const [copied, setCopied] = useState(null);
+     const account = useAccount()
+  const { connectors, connect, status, error } = useConnect()
+  const { disconnect } = useDisconnect()
+  const {isConnected} = useAccount()
+  const [users, setUsers] = useState<string>();
+  const [loading, setLoading] = useState(true);
+  const [activities, setactivities] = useState<DataType[]>([]);
+  const shortenAddress = (addr: string) => {
+    if (!addr){
+      return ""
+    }
+    return `${addr?.slice(0, 6)}...${addr?.slice(-4)}`;
+  };
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/auth/getuserinfo`, {
+          withCredentials: true, // 👈 if backend sends cookies
+        });
+        const res2 = await axios.get(`${import.meta.env.VITE_API_URL}/api/contract/getallactivities`, {
+          withCredentials: true, // 👈 if backend sends cookies
+        });
+        
+        console.log(res.data.data)
+        console.log(res2.data.data)
+        setUsers(res.data.data.name);
+        setactivities(res2.data.data)
+      } catch (error) {
+        console.error("Error fetching users:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUsers();
+  }, []);
+
+ if (loading)
+  return (
+    <div className="flex justify-center items-center h-screen bg-[#0a0a0a]">
+      <div className="relative">
+        {/* Gradient Ring */}
+        <div className="w-12 h-12 rounded-full border-4 border-transparent border-t-pink-500 border-r-orange-400 animate-spin"></div>
+
+        {/* Center Glow or Text */}
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="w-8 h-8 rounded-full bg-gradient-to-r from-pink-500 to-orange-400 flex items-center justify-center text-white font-bold text-xs">
+            ⚡
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 
   const handleCopy = async (text, label) => {
     try {
@@ -80,7 +146,7 @@ export default function Dashboard() {
     <div className="flex min-h-screen bg-[#0f0f0f] text-white">
       {/* Sidebar */}
       {/* <aside className="w-64 bg-[#141414] p-6 border-r border-gray-800">
-        <h1 className="text-2xl font-bold text-white mb-10">BaseSign</h1>
+        <h1 className="text-2xl font-bold text-white mb-10">basesig</h1>
         <nav className="space-y-4 text-gray-400">
           {["Home", "Contracts", "Messenger", "Wallet", "Lend"].map((item) => (
             <div key={item} className="hover:text-pink-500 cursor-pointer">
@@ -125,18 +191,42 @@ export default function Dashboard() {
             <div className="flex items-center mt-2 space-x-3">
       <div className="w-10 h-10 rounded-full bg-gradient-to-r from-pink-500 to-orange-400 flex items-center justify-center text-white font-bold text-sm">
         {/* You can replace this with <img src={user.avatar} /> if you have images */}
-        UZ
+        {users.split(" ").map(name => name[0]).join("") .toUpperCase()}
       </div>
       <div>
-        <p className="text-white font-medium">Uzor Ifeanyi</p>
-        <p className="text-gray-500 text-sm">0x24...364</p>
+        <p className="text-white font-medium">{users}</p>
+        <div>
+          {account.status === 'disconnected' ?<Link to={`https://www.base.org/names`} className="inline-block px-5 py-2.5 rounded-lg bg-gradient-to-r from-pink-500 to-orange-400 text-white font-medium shadow-md transition-all hover:opacity-90 hover:shadow-lg hover:scale-[1.02]" >Get A Base NAme</Link>:`${users.split(" ")[0].toLowerCase()}.base.eth`}
+        </div>
+        <p className="text-gray-500 text-sm">{shortenAddress(account.address)}</p>
+
       </div>
     {/* */}
     </div>
           </div>
-          <Button className="bg-gradient-to-r from-pink-500 to-orange-400 text-white hover:opacity-90">
-            Create Signature
+         
+
+{account.status === 'connected' && (
+          <Button type="button" onClick={() => disconnect()}className="bg-gradient-to-r from-pink-500 to-orange-400 text-white hover:opacity-90">
+            Disconnect
           </Button>
+        )}
+      {account.status === 'disconnected'  && connectors.map((connector) => (
+           <Button  key={connector.uid}
+           onClick={() => connect({ connector })}
+           type="button" className="bg-gradient-to-r from-pink-500 to-orange-400 text-white hover:opacity-90">
+           
+         Connect Wallet
+           
+         </Button>
+        
+        ))}
+      
+  
+
+          {/* <Button className="bg-gradient-to-r from-pink-500 to-orange-400 text-white hover:opacity-90">
+            Create Signature
+          </Button> */}
         </div>
         </div> 
 
@@ -165,6 +255,7 @@ export default function Dashboard() {
         </Document> */}
 
         <Document
+        // {visibleContracts[index].documenturl}
   file="/ifeanyi.pdf"
   onLoadSuccess={() => console.log('PDF loaded')}
   onLoadError={(error) => console.error('Failed to load PDF:', error)}
@@ -246,12 +337,9 @@ export default function Dashboard() {
                   className="hover:bg-[#2a2a2a] transition-all border-b border-gray-700"
                 >
                   <td className="py-3 px-4 text-pink-400 truncate max-w-[200px]">
-                    <span className="truncate max-w-[180px] text-pink-400">
-                      {activity.transactionHash}
-                    </span>
-                    <button
+                     <button
                       onClick={() =>
-                        handleCopy(activity.transactionHash, `tx-${index}`)
+                        handleCopy(activity.signerTxonchain, `tx-${index}`)
                       }
                       className="p-1 hover:text-pink-400 transition"
                       title="Copy"
@@ -262,12 +350,16 @@ export default function Dashboard() {
                         <Copy size={16} />
                       )}
                     </button>
+                    <span className="truncate max-w-[180px] text-pink-400">
+                      {activity.signerTxonchain}
+                    </span>
+                   
                   </td>
-                  <td className="py-3 px-4">{activity.contractId}</td>
+                  <td className="py-3 px-4">{activity.contractid}</td>
                   <td className="py-3 px-4 truncate max-w-[200px]">
-                    {activity.documentHash}
+                    {activity.documenthash}
                   </td>
-                  <td className="py-3 px-4">{activity.documentName}</td>
+                  <td className="py-3 px-4">{activity.contractname}</td>
                 </tr>
               ))}
             </tbody>

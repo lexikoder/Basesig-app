@@ -2,18 +2,46 @@ import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import axios from "axios"
 
 export default function LoginPage() {
   const navigate = useNavigate()
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+ const [error, setError] = useState("");       // 🧩 State to hold error message
+  const [success, setSuccess] = useState("");
 
-  const handleLogin = () => {
+  const handleLogin = async(e) => {
     if (email && password) {
       // Normally you'd call your backend here for authentication
-      console.log("Logging in with:", { email, password })
-      localStorage.setItem("signupEmail", email)
-      navigate("/dashboard") // navigate to OTP verification page
+       e.preventDefault();
+    setError("");
+    setSuccess("");
+      try {
+      const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/auth/login`, {
+      email,
+      password
+      }, {withCredentials: true});
+
+    setSuccess("Contract created successfully! 🎉");
+      navigate("/dashboard" , { replace: true })
+
+    } catch (err) {
+      console.error("Error creating contract:", err);
+
+      // 👇 Display a friendly message to the user
+      if (err.response) {
+        // Server responded with an error
+        setError(err.response.data.error || "Something went wrong on the server.");
+      } else if (err.request) {
+        // No response from the server
+        setError("No response from the server. Please check your connection.");
+      } else {
+        // Request setup issue
+        setError("Error setting up request. Try again later.");
+      }
+      // navigate to OTP verification page
+    }
     } else {
       alert("Please fill in both fields.")
     }
@@ -27,7 +55,7 @@ export default function LoginPage() {
           {/* Logo */}
           <div className="flex justify-center items-center space-x-2 mb-6">
             <div className="w-6 h-6 bg-gradient-to-r from-pink-500 to-orange-500 rounded-lg"></div>
-            <h1 className="text-xl font-semibold">Basesign</h1>
+            <h1 className="text-xl font-semibold">basesig</h1>
           </div>
 
           {/* Title */}
@@ -63,7 +91,8 @@ export default function LoginPage() {
               />
             </div>
           </div>
-
+          {error && <p className="mt-4 text-red-400">{error}</p>}
+      {success && <p className="mt-4 text-green-400">{success}</p>}
           {/* Login Button */}
           <Button
             onClick={handleLogin}
@@ -90,7 +119,7 @@ export default function LoginPage() {
         <div className="text-center px-8">
           <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6">
             <p className="text-lg font-medium">
-              Access your Basesign dashboard securely 🔐
+              Access your basesig dashboard securely 🔐
             </p>
           </div>
         </div>

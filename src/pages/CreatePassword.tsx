@@ -1,14 +1,27 @@
 import { useState } from "react"
-import { useNavigate } from "react-router-dom"
+import { useLocation, useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import axios from "axios";
 
 export default function CreatePasswordPage() {
   const navigate = useNavigate()
   const [password, setPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
+  const location = useLocation();
+  const {
+      email,
+      firstName ,
+      lastName ,
+      role ,
+       approvedId ,
+       companyname ,
+        country
+      } = location.state || {};
+const [error, setError] = useState("");       // 🧩 State to hold error message
+  const [success, setSuccess] = useState(""); 
 
-  const handleCreatePassword = () => {
+  const handleCreatePassword = async(e) => {
     if (!password || !confirmPassword) {
       alert("Please fill in both fields.")
       return
@@ -19,11 +32,46 @@ export default function CreatePasswordPage() {
       return
     }
 
+          e.preventDefault();
+    setError("");
+    setSuccess("");
+
+    try {
+      const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/auth/register`, {
+      email,
+      firstname:firstName ,
+      lastname:lastName ,
+      role ,
+       approvedId ,
+       companyname ,
+        country,
+        password
+      });
+
+    setSuccess("Contract created successfully! 🎉");
+     navigate("/welcome")
+
+    } catch (err) {
+      console.error("Error creating contract:", err);
+
+      // 👇 Display a friendly message to the user
+      if (err.response) {
+        // Server responded with an error
+        setError(err.response.data.error || "Something went wrong on the server.");
+      } else if (err.request) {
+        // No response from the server
+        setError("No response from the server. Please check your connection.");
+      } else {
+        // Request setup issue
+        setError("Error setting up request. Try again later.");
+      }
+
     // Normally, you’d send this to your backend API to create the account
     console.log("Password created:", password)
     localStorage.setItem("userPassword", password)
-    navigate("/welcome") // or wherever you want to go next
+    // navigate("/welcome") // or wherever you want to go next
   }
+}
 
   return (
     <div className="min-h-screen grid grid-cols-1 md:grid-cols-2">
@@ -33,7 +81,7 @@ export default function CreatePasswordPage() {
           {/* Logo */}
           <div className="flex justify-center items-center space-x-2 mb-6">
             <div className="w-6 h-6 bg-gradient-to-r from-pink-500 to-orange-500 rounded-lg"></div>
-            <h1 className="text-xl font-semibold">Basesign</h1>
+            <h1 className="text-xl font-semibold">basesig</h1>
           </div>
 
           {/* Title */}
@@ -99,7 +147,7 @@ export default function CreatePasswordPage() {
         <div className="text-center px-8">
           <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6">
             <p className="text-lg font-medium">
-              Secure your Basesign account with a strong password 🔐
+              Secure your basesig account with a strong password 🔐
             </p>
           </div>
         </div>
@@ -107,3 +155,4 @@ export default function CreatePasswordPage() {
     </div>
   )
 }
+
