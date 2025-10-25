@@ -14,7 +14,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   useEffect(() => {
     const verifyUser = async () => {
       try {
-        const res = await axios.get("http://localhost:8000/api/auth/verify", {
+        const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/auth/verify`, {
           withCredentials: true, // crucial for sending cookies
         });
         if (res.data.valid) setIsAuth(true);
