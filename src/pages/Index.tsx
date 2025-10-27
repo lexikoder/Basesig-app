@@ -151,7 +151,11 @@ export default function Signup() {
               </a>
               .
             </p> */}
-
+            <div>Go to login page and login with this </div>
+          <div>Test Email: uzorifeanyi123@gmail.com</div>
+          <div>password: 10111011</div>
+          <div>Test Email: uzorifeanyi1011@gmail.com</div>
+          <div>password: 10111011</div>
             <Button
               type="submit" 
               className="w-full bg-white text-black hover:bg-gray-200"
