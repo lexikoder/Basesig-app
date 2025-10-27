@@ -94,6 +94,8 @@ export default function LoginPage() {
           {error && <p className="mt-4 text-red-400">{error}</p>}
       {success && <p className="mt-4 text-green-400">{success}</p>}
           {/* Login Button */}
+          <div>Test Email: uzorifeanyi123@gmail.com</div>
+          <div>password: 10111011</div>
           <Button
             onClick={handleLogin}
             className="w-full bg-white text-black hover:bg-gray-200"
