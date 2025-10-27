@@ -72,7 +72,8 @@ export default function Signup() {
       // 👇 Display a friendly message to the user
       if (err.response) {
         // Server responded with an error
-        setError(err.response.data.error || "Something went wrong on the server.");
+        console.log(err.response.data.message,err.response)
+        setError(err.response.data.message || "Something went wrong on the server.");
       } else if (err.request) {
         // No response from the server
         setError("No response from the server. Please check your connection.");
