@@ -56,7 +56,7 @@ export default function Signup() {
     // e.preventDefault();
     setError("");
     setSuccess("");
-
+    console.log("hello")
     try {
       const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/auth/reqotp`, {
         email:data.email
