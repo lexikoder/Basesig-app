@@ -118,8 +118,9 @@ export default function Dashboard() {
         setUsers(res.data.data.name);
         setactivities(res2.data.data)
         setDocs(res3.data.data)
+        console.log(res3.data.data)
         setSelectedContract(res3.data.data)
-
+ 
       } catch (error) {
         console.error("Error fetching users:", error);
       } finally {
