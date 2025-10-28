@@ -159,7 +159,7 @@ formData.append("expiresin",expiration);
           {file ? (
             <div className="h-56 overflow-hidden border border-gray-600 rounded mb-4">
           <Document
-  file="/ifeanyi.pdf"
+  file={file}
   onLoadSuccess={() => console.log('PDF loaded')}
   onLoadError={(error) => console.error('Failed to load PDF:', error)}
 >
