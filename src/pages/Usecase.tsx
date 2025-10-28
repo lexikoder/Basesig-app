@@ -4,7 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Shield, FileText, Coins, CheckCircle, TrendingUp, ArrowRight } from "lucide-react";
 
 export default function UseCasesPage() {
-  const basesigUseCases = [
+  const BasesigUseCases = [
     {
       icon: FileText,
       title: "Smart Contract Automation",
@@ -44,7 +44,7 @@ export default function UseCasesPage() {
         <div className="container mx-auto px-6 py-4 flex justify-between items-center">
           <div className="flex items-center space-x-2 cursor-pointer">
             <div className="w-6 h-6 bg-gradient-to-r from-pink-500 to-orange-400 rounded-lg"></div>
-            <h1 className="text-xl font-semibold text-white">basesig</h1>
+            <h1 className="text-xl font-semibold text-white">Basesig</h1>
           </div>
 
           <Button
@@ -61,12 +61,12 @@ export default function UseCasesPage() {
         <div className="container mx-auto px-4">
           <h1 className="text-5xl md:text-6xl font-bold mb-6">
             <span className="bg-gradient-to-r from-pink-500 to-orange-400 text-transparent bg-clip-text">
-              basesig
+              Basesig
             </span>{" "}
             Use Case
           </h1>
           <p className="text-lg text-gray-400 max-w-2xl mx-auto">
-            How basesig’s digital signature infrastructure powers secure, transparent,
+            How Basesig’s digital signature infrastructure powers secure, transparent,
             and compliant blockchain-based receivables financing with Hashfire.
           </p>
         </div>
@@ -79,18 +79,18 @@ export default function UseCasesPage() {
             <h2 className="text-4xl md:text-5xl font-bold mb-4">
               Real-World Impact of{" "}
               <span className="bg-gradient-to-r from-pink-500 to-orange-400 text-transparent bg-clip-text">
-                basesig
+                Basesig
               </span>
             </h2>
             <p className="text-gray-400 max-w-2xl mx-auto">
-              basesig’s eSignature and document verification layer help Hashfire build
+              Basesig’s eSignature and document verification layer help Hashfire build
               trustless financial automation for businesses worldwide.
             </p>
           </div>
 
           {/* USE CASE CARDS */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {basesigUseCases.map((useCase, index) => (
+            {BasesigUseCases.map((useCase, index) => (
               <Card
                 key={index}
                 className="bg-[#1a1a1a] border border-gray-700 hover:border-pink-500/40 hover:shadow-lg transition-all duration-300"
@@ -120,7 +120,7 @@ export default function UseCasesPage() {
             <span className="bg-gradient-to-r from-pink-500 to-orange-400 text-transparent bg-clip-text">
               blockchain use case
             </span>{" "}
-            with basesig?
+            with Basesig?
           </h2>
           <p className="text-gray-400 max-w-2xl mx-auto mb-8">
             Get started with secure eSignatures and document validation APIs designed for
@@ -138,7 +138,7 @@ export default function UseCasesPage() {
       {/* FOOTER */}
       <footer className="py-10 border-t border-gray-800 bg-[#0f0f0f] text-gray-400">
         <div className="container mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-4">
-          <p>© 2025 basesig. All rights reserved.</p>
+          <p>© 2025 Basesig. All rights reserved.</p>
           <div className="flex gap-6 text-sm">
             <a href="#" className="hover:text-pink-500 transition-colors">
               Privacy Policy

@@ -31,6 +31,7 @@ import MakepaymentPage from "./pages/makepayment";
 import Makepayment from "./pages/Makepaymentpage";
 import ProtectedRoute from "./pages/ProtectedRoute";
 import { Providers } from "./providers";
+import { ContractProvider, Datadocs } from "./context";
 
 
 // import { OnchainKitProvider } from "@coinbase/onchainkit";
@@ -59,6 +60,7 @@ return (
       <Toaster />
       <Sonner />
       <BrowserRouter>
+      <ContractProvider>
         <Routes>
           <Route path="/dashboard" element={ 
             <ProtectedRoute>
@@ -105,6 +107,7 @@ return (
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           {/* <Route path="*" element={<NotFound />} /> */}
         {/* </Routes> */}
+        </ContractProvider>
       </BrowserRouter>
     </TooltipProvider>
     {/* </OnchainKitProvider> */}

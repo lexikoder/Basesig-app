@@ -54,34 +54,34 @@ export default function Signup() {
   const onSubmit = async (data: FormData) => {
     localStorage.setItem("signupEmail", data.email)
     // e.preventDefault();
-    setError("");
-    setSuccess("");
-    console.log("hello")
-    try {
-      const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/auth/reqotp`, {
-        email:data.email
-      });
+    // setError("");
+    // setSuccess("");
+    // console.log("hello")
+    // try {
+    //   const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/auth/reqotp`, {
+    //     email:data.email
+    //   });
 
-      setSuccess("Contract created successfully! 🎉");
-      // console.log("Contract created:", response.data);
-      navigate("/otp",{ state: { email:data.email } })
+    //   setSuccess("Contract created successfully! 🎉");
+    //   // console.log("Contract created:", response.data);
+      navigate("/onboard",{ state: { email:data.email } })
 
-    } catch (err) {
-      console.error("Error creating contract:", err);
+    // } catch (err) {
+    //   console.error("Error creating contract:", err);
 
-      // 👇 Display a friendly message to the user
-      if (err.response) {
-        // Server responded with an error
-        console.log(err.response.data.message,err.response)
-        setError(err.response.data.message || "Something went wrong on the server.");
-      } else if (err.request) {
-        // No response from the server
-        setError("No response from the server. Please check your connection.");
-      } else {
-        // Request setup issue
-        setError("Error setting up request. Try again later.");
-      }
-    }
+    //   // 👇 Display a friendly message to the user
+    //   if (err.response) {
+    //     // Server responded with an error
+    //     console.log(err.response.data.message,err.response)
+    //     setError(err.response.data.message || "Something went wrong on the server.");
+    //   } else if (err.request) {
+    //     // No response from the server
+    //     setError("No response from the server. Please check your connection.");
+    //   } else {
+    //     // Request setup issue
+    //     setError("Error setting up request. Try again later.");
+    //   }
+    // }
     
   }
 
@@ -94,7 +94,7 @@ export default function Signup() {
           <div className="flex justify-center">
           <div className="flex items-center space-x-2 mb-6">
             <div className="w-6 h-6 bg-gradient-to-r from-pink-500 to-orange-500 rounded-lg"></div>
-            <h1 className="text-xl font-semibold">basesig</h1>
+            <h1 className="text-xl font-semibold">Basesig</h1>
           </div>
           </div>
 

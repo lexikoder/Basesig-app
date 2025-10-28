@@ -81,7 +81,7 @@ const [error, setError] = useState("");       // 🧩 State to hold error messag
           {/* Logo */}
           <div className="flex justify-center items-center space-x-2 mb-6">
             <div className="w-6 h-6 bg-gradient-to-r from-pink-500 to-orange-500 rounded-lg"></div>
-            <h1 className="text-xl font-semibold">basesig</h1>
+            <h1 className="text-xl font-semibold">Basesig</h1>
           </div>
 
           {/* Title */}
@@ -147,7 +147,7 @@ const [error, setError] = useState("");       // 🧩 State to hold error messag
         <div className="text-center px-8">
           <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6">
             <p className="text-lg font-medium">
-              Secure your basesig account with a strong password 🔐
+              Secure your Basesig account with a strong password 🔐
             </p>
           </div>
         </div>

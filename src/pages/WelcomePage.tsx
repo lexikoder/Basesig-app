@@ -12,12 +12,12 @@ export default function WelcomePage() {
           {/* Logo */}
           <div className="flex justify-center items-center space-x-2">
             <div className="w-6 h-6 bg-gradient-to-r from-pink-500 to-orange-500 rounded-lg"></div>
-            <h1 className="text-xl font-semibold">basesig</h1>
+            <h1 className="text-xl font-semibold">Basesig</h1>
           </div>
 
           {/* Message */}
           <div className="space-y-2">
-            <h2 className="text-3xl font-bold">Welcome to basesig 🎉</h2>
+            <h2 className="text-3xl font-bold">Welcome to Basesig 🎉</h2>
             <p className="text-gray-400 text-sm">
               Your account has been successfully created.  
               You can now log in and start exploring your dashboard.
@@ -39,7 +39,7 @@ export default function WelcomePage() {
         <div className="text-center px-8">
           <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6">
             <p className="text-lg font-medium">
-              Welcome aboard! Let’s get started with your basesig journey 🚀
+              Welcome aboard! Let’s get started with your Basesig journey 🚀
             </p>
           </div>
         </div>

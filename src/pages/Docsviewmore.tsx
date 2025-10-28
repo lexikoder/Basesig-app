@@ -2,11 +2,12 @@ import React from "react";
 import { Button } from "@/components/ui/button"; // Use your Button component or ShadCN
 import { ArrowRight } from "lucide-react";
 import { ChevronDown, LogOut } from "lucide-react";
-import { Link, Outlet } from "react-router-dom";
+import { Link, Outlet, useLocation } from "react-router-dom";
 import { useState } from "react";
 import { Document, Page, pdfjs } from 'react-pdf';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { ArrowLeft } from "lucide-react";
+import { useContract } from "@/context";
 // // import pdf from "@/assets/ifeanyi.pdf";
 // pdfjs.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
 // // import workerSrc from 'pdfjs-dist/build/pdf.worker.entry';
@@ -22,12 +23,17 @@ export default function DocsViewmore() {
     const [showAll, setShowAll] = useState(false);
      const [open, setOpen] = useState(false);
     const allContracts = [1, 2, 3, 4, 5, 6, 7, 8, 9]; // Example: 9 total contracts
-    const visibleContracts = showAll ? allContracts : allContracts.slice(0, 3);
+    // const visibleContracts = showAll ? allContracts : allContracts.slice(0, 3);
+  //   const location = useLocation();
+  // const { contract } = location.state || {};
+  // console.log(contract,"ggggg")
+  const { selectedContract } = useContract();
+  const visibleContracts = showAll ? selectedContract : selectedContract.slice(0, 3);
   return (
     <div className="flex min-h-screen bg-[#0f0f0f] text-white">
       {/* Sidebar */}
       {/* <aside className="w-64 bg-[#141414] p-6 border-r border-gray-800">
-        <h1 className="text-2xl font-bold text-white mb-10">basesig</h1>
+        <h1 className="text-2xl font-bold text-white mb-10">Basesig</h1>
         <nav className="space-y-4 text-gray-400">
           {["Home", "Contracts", "Messenger", "Wallet", "Lend"].map((item) => (
             <div key={item} className="hover:text-pink-500 cursor-pointer">
@@ -48,7 +54,7 @@ export default function DocsViewmore() {
         {/* Agreements Section */}
         <div className="mb-12">
             <Link
-        to="/dashboard/home"
+        to="/dashboard/"
         className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#1a1a1a] text-gray-300 border border-gray-700 hover:border-pink-500 hover:text-white transition-all hover:shadow-lg hover:scale-[1.02]"
       >
         <ArrowLeft size={18} />
@@ -66,19 +72,19 @@ export default function DocsViewmore() {
           </div>
           <br />
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {visibleContracts.map((_, index) => (
+            {visibleContracts.map((contract, index) => (
               <div
                 key={index}
                 className="bg-[#1a1a1a] border border-gray-700 rounded-lg p-6 hover:border-pink-500/40 transition-all"
               >
-                <h4 className="text-white text-md font-medium mb-2">NDA Contract</h4>
+                <h4 className="text-white text-md font-medium mb-2">{contract.contractname}</h4>
                 <div className="h-56 overflow-hidden border border-gray-600 rounded mb-4">
         {/* <Document file="/ifeanyi.pdf">
           <Page pageNumber={1} width={300} />
         </Document> */}
 
         <Document
-  file="/ifeanyi.pdf"
+  file={contract.documenturl}
   onLoadSuccess={() => console.log('PDF loaded')}
   onLoadError={(error) => console.error('Failed to load PDF:', error)}
 >
@@ -103,7 +109,7 @@ export default function DocsViewmore() {
           {/* PDF Viewer */}
           <div className="w-full h-full">
             <iframe
-              src="/ifeanyi.pdf"
+              src={contract.documenturl}
               title="Document"
               className="w-full h-full"
             />
@@ -114,7 +120,7 @@ export default function DocsViewmore() {
               </div>
               
             ))}
-            {allContracts.length > 3 && (
+            {selectedContract.length > 3 && (
         <div className="mt-8">
           {/* <Link to="/dashboard/wallet" className="block hover:text-pink-500">View more</Link> */}
           <Button

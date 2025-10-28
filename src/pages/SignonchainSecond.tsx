@@ -7,6 +7,15 @@ import abi from "../Abi.json";
 import { Abi } from "viem";
 import { baseSepolia } from "viem/chains";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Document, Page, pdfjs } from 'react-pdf';
+// import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+
+
+
+pdfjs.GlobalWorkerOptions.workerSrc = new URL(
+  'pdfjs-dist/build/pdf.worker.min.mjs',
+  import.meta.url,
+).toString();
 
 export interface IUser {
   _id: string;
@@ -51,6 +60,7 @@ export default function SignOnchainsecond() {
       hash: writeData,
     });
  const [open, setOpen] = useState(false);
+ const [opendocs,setOpendocs] =  useState(false);
    const [open2, setOpen2] = useState(false);
 
    useEffect(() => {
@@ -150,9 +160,61 @@ export default function SignOnchainsecond() {
     <div className=" bg-[#0f0f0f] text-white flex justify-center  p-6">
       <div className="bg-[#1a1a1a] border border-gray-700 rounded-2xl p-8 w-full max-w-3xl shadow-lg">
         <h2 className="text-2xl font-semibold mb-6 text-center">{contract.contractname}</h2>
-
+        
         {/* Document Viewer Placeholder */}
-        <div className="bg-[#0f0f0f] border border-gray-700 rounded-lg h-64 flex justify-center items-center text-gray-500 mb-4">
+        {/* <div className="grid grid-cols-3  gap-6 h-56 overflow-hidden border border-gray-600 rounded mb-4">
+          <Document
+            file={contract.documenturl} // replace with contract.documentUrl if available
+            onLoadSuccess={() => console.log('PDF loaded')}
+            onLoadError={(error) => console.error('Failed to load PDF:', error)}
+          >
+            <Page pageNumber={1} width={400} />
+          </Document>
+        </div> */}
+        {/* <div className="flex items-center justify-center h-56 overflow-hidden border border-gray-600 rounded mb-4">
+  <Document
+            file={contract.documenturl} // replace with contract.documentUrl if available
+            onLoadSuccess={() => console.log('PDF loaded')}
+            onLoadError={(error) => console.error('Failed to load PDF:', error)}
+          >
+            <Page pageNumber={1} width={400} />
+          </Document>
+</div> */}
+
+<div className="flex items-center justify-center w-1/2 h-56 overflow-hidden border border-gray-600 rounded mb-4 mx-auto">
+  <Document
+    file={contract.documenturl}
+    onLoadSuccess={() => console.log("PDF loaded")}
+    onLoadError={(error) => console.error("Failed to load PDF:", error)}
+  >
+    <Page pageNumber={1} width={350}  />
+  </Document>
+</div>
+        <div className="flex justify-center">
+  <Button
+    size="sm"
+    variant="outline"
+    className="border-gray-600 text-black mb-4"
+    onClick={() => setOpendocs(true)}
+  >
+    View Docs
+  </Button>
+</div>
+
+        <Dialog open={opendocs} onOpenChange={setOpendocs}>
+          <DialogContent className="max-w-5xl h-[80vh] p-0">
+            <div className="w-full h-full">
+              <iframe
+              
+                src={contract.documenturl} // replace with contract.documentUrl if available
+                title="Document"
+                className="w-full h-full"
+              />
+            </div>
+          </DialogContent>
+        </Dialog>
+        
+        {/* <div className="bg-[#0f0f0f] border border-gray-700 rounded-lg h-64 flex justify-center items-center text-gray-500 mb-4">
           <p>📄 Document Preview</p>
         </div>
 
@@ -160,7 +222,7 @@ export default function SignOnchainsecond() {
           <Button className="bg-gradient-to-r from-pink-500 to-orange-400 text-white font-semibold hover:opacity-90">
             View Docs
           </Button>
-        </div>
+        </div> */}
 
         {/* Signer Table */}
         <table className="min-w-full text-sm border-t border-gray-700">
