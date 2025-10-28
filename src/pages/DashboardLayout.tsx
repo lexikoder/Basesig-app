@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link, Outlet } from "react-router-dom";
+import { Link, Outlet, useNavigate } from "react-router-dom";
 import { LogOut } from "lucide-react";
 import {  useLocation } from "react-router-dom";
 import {
@@ -10,9 +10,11 @@ import {
   FileCheck,
   HandCoins,
 } from "lucide-react";
+import axios from "axios";
 
 export default function DashboardLayout() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const navigate = useNavigate()
    const menuItems = [
     { name: "Home", path: "/dashboard", icon: <Home size={18} /> },
     { name: "Contracts", path: "/dashboard/contracts", icon: <FileText size={18} /> },
@@ -23,7 +25,31 @@ export default function DashboardLayout() {
   ];
   
   const location = useLocation();
-
+  const handleSign = async() => {
+        //  
+          // console.log("Signing onchain with:", { file, email, expiration });
+       
+           
+        // setOpen(true);
+         
+          try {
+            // console.log(datas.contractid,
+            //       writeData)
+         const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/contract/logout`, 
+                
+                //  {headers: { "Content-Type": "multipart/form-data" },
+                 {withCredentials: true});
+      
+           navigate("/login")
+          } catch (error) {
+            console.error("POST failed:", error);
+          } finally {
+           
+           
+          }
+        
+          
+        }
   return (
     <div className="flex min-h-screen bg-[#0f0f0f] text-white">
       {/* Sidebar */}
@@ -72,7 +98,7 @@ export default function DashboardLayout() {
             {dropdownOpen && (
               <div className="absolute right-0 mt-2 w-40 bg-[#1a1a1a] border border-gray-700 rounded-md shadow-lg z-50">
                 <button
-                  onClick={() => console.log("Logout clicked")}
+                  onClick={() => handleSign()}
                   className="w-full px-4 py-2 text-left text-sm text-gray-300 hover:text-pink-500 hover:bg-[#232323] flex items-center space-x-2"
                 >
                   <LogOut className="w-4 h-4" />
