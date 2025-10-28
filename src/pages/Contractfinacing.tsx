@@ -74,6 +74,7 @@ interface ContractData {
   paymentstatus: "pending" | "completed" | "failed"; // possible values
   createdAt: string;
   updatedAt: string;
+  participants:[string]
   __v: number;
   createdat: string;
   signerTxonchain?: string;
@@ -172,19 +173,14 @@ export default function ContractFinancingPage() {
               <td className="py-3 px-4">{contract.contractid}</td>
               <td className="py-3 px-4 flex space-x-2">
                 
+                  {contract.participants.map((initials, i) => (
                   <div
-                    
+                    key={i}
                     className="w-8 h-8 rounded-full bg-gradient-to-r from-pink-500 to-orange-400 text-white flex items-center justify-center text-xs font-bold"
                   >
-                  UI
+                    {initials}
                   </div>
-
-                  <div
-                    
-                    className="w-8 h-8 rounded-full bg-gradient-to-r from-pink-500 to-orange-400 text-white flex items-center justify-center text-xs font-bold"
-                  >
-                  IX
-                  </div>
+                ))}
               
               </td>
               <td className="py-3 px-4 text-red-300">{contract.contractname}</td>
@@ -249,18 +245,14 @@ export default function ContractFinancingPage() {
               <td className="py-3 px-4">{contract.contractid}</td>
               <td className="py-3 px-4 flex space-x-2">
                 
+                  {contract.participants.map((initials, i) => (
                   <div
-                    
+                    key={i}
                     className="w-8 h-8 rounded-full bg-gradient-to-r from-pink-500 to-orange-400 text-white flex items-center justify-center text-xs font-bold"
                   >
-                    UI
+                    {initials}
                   </div>
-                  <div
-                    
-                    className="w-8 h-8 rounded-full bg-gradient-to-r from-pink-500 to-orange-400 text-white flex items-center justify-center text-xs font-bold"
-                  >
-                    XI
-                  </div>
+                ))}
                 
               </td>
               <td className="py-3 px-4 text-red-300">{contract.contractname}</td>

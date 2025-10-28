@@ -36,6 +36,7 @@ export interface IContract {
   contractid: string;
   documenthash: string;
   contractname: string;
+  participants:[string]
   signerid: IUser;
   recipientid: IUser;
   signerstatus: "pending" | "signed" | "rejected"; // optional union type

@@ -61,14 +61,14 @@ const pendingContracts = [
 interface DataTypepending {
   
   contractid:string
-  
+  participants:[string]
   recipientstatus:string
   createdat:string
 
 }
 interface DataType {
   contractid:string
-  
+  participants:[string]
   recipientstatus:string
   createdat:string
   completedAt:string
@@ -154,15 +154,15 @@ export default function ContractsPage() {
             <tr key={index} className="hover:bg-[#2a2a2a] transition-all border-b border-gray-700">
               <td className="py-3 px-4">{contract.contractid}</td>
               <td className="py-3 px-4 flex space-x-2">
-                {/* {contract.signers.map((initials, i) => (
+                {contract.participants.map((initials, i) => (
                   <div
                     key={i}
                     className="w-8 h-8 rounded-full bg-gradient-to-r from-pink-500 to-orange-400 text-white flex items-center justify-center text-xs font-bold"
                   >
                     {initials}
                   </div>
-                ))} */}
-                 <div
+                ))}
+                 {/* <div
                     // key={i}
                     className="w-8 h-8 rounded-full bg-gradient-to-r from-pink-500 to-orange-400 text-white flex items-center justify-center text-xs font-bold"
                   >
@@ -173,7 +173,7 @@ export default function ContractsPage() {
                     className="w-8 h-8 rounded-full bg-gradient-to-r from-pink-500 to-orange-400 text-white flex items-center justify-center text-xs font-bold"
                   >
                     XI
-                  </div>
+                  </div> */}
               </td>
               <td className="py-3 px-4 text-red-300">{contract.recipientstatus}</td>
               <td className="py-3 px-4 text-gray-400">{contract.createdat}</td>
@@ -291,18 +291,14 @@ export default function ContractsPage() {
               <td className="py-3 px-4">{contract.contractid}</td>
               <td className="py-3 px-4 flex space-x-2">
                 {/* {contract.signers.map((initials, i) => ( */}
+                  {contract.participants.map((initials, i) => (
                   <div
-                    // key={i}
+                    key={i}
                     className="w-8 h-8 rounded-full bg-gradient-to-r from-pink-500 to-orange-400 text-white flex items-center justify-center text-xs font-bold"
                   >
-                    UI
+                    {initials}
                   </div>
-                  <div
-                    // key={i}
-                    className="w-8 h-8 rounded-full bg-gradient-to-r from-pink-500 to-orange-400 text-white flex items-center justify-center text-xs font-bold"
-                  >
-                    XI
-                  </div>
+                ))}
                 {/* ))} */}
               </td>
               <td className="py-3 px-4 text-green-400">{"Completed"}</td>

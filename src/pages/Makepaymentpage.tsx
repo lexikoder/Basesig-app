@@ -84,7 +84,7 @@ export default function Makepayment() {
           <Input
             id="asset"
             type="text"
-            value="USDT"
+            value="USDC"
             
             
             className="w-full bg-[#0f0f0f] border border-gray-700 text-white"

@@ -19,7 +19,7 @@ export default function DashboardLayout() {
     // { name: "Wallet", path: "/dashboard/wallet", icon: <Wallet size={18} /> },
     { name: "Contract Financing", path: "/dashboard/contract-financing", icon: <HandCoins size={18} /> },
     { name: "Financed Contracts", path: "/dashboard/financed-contract", icon: <FileCheck size={18} /> },
-    { name: "Make Payment", path: "/dashboard/make-payment", icon: <DollarSign size={18} /> },
+    // { name: "Refund Payment", path: "/dashboard/make-payment", icon: <DollarSign size={18} /> },
   ];
   
   const location = useLocation();

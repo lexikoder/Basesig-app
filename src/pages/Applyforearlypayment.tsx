@@ -52,7 +52,7 @@ export default function Applyforearlypayment() {
    const { contractid } = useParams<{ contractid: string }>();
     const [loading, setLoading] = useState(true);
     const [contract, setcontract] = useState<IContract>();
-     
+      const [opendocs,setOpendocs] =  useState(false);
    const [open, setOpen] = useState(false);
      const [open2, setOpen2] = useState(false);
 
@@ -142,15 +142,38 @@ export default function Applyforearlypayment() {
     <div className="min-h-screen bg-[#0f0f0f] text-white p-6">
       <div className="max-w-2xl mx-auto bg-[#1a1a1a] border border-gray-700 rounded-lg p-8 space-y-6">
         <h2 className="text-xl font-semibold mb-4">{contract.contractname}</h2>
-         <div className="bg-[#0f0f0f] border border-gray-700 rounded-lg h-64 flex justify-center items-center text-gray-500 mb-4">
-                  <p>📄 Document Preview</p>
-                </div>
-        
-                <div className="flex justify-center mb-6">
-                  <Button className="bg-gradient-to-r from-pink-500 to-orange-400 text-white font-semibold hover:opacity-90">
-                    View Docs
-                  </Button>
-                </div>
+         <div className="flex items-center justify-center w-1/2 h-56 overflow-hidden border border-gray-600 rounded mb-4 mx-auto">
+           <Document
+             file={contract.documenturl}
+             onLoadSuccess={() => console.log("PDF loaded")}
+             onLoadError={(error) => console.error("Failed to load PDF:", error)}
+           >
+             <Page pageNumber={1} width={350}  />
+           </Document>
+         </div>
+                 <div className="flex justify-center">
+           <Button
+             size="sm"
+             variant="outline"
+             className="border-gray-600 text-black mb-4"
+             onClick={() => setOpendocs(true)}
+           >
+             View Docs
+           </Button>
+         </div>
+         
+                 <Dialog open={opendocs} onOpenChange={setOpendocs}>
+                   <DialogContent className="max-w-5xl h-[80vh] p-0">
+                     <div className="w-full h-full">
+                       <iframe
+                       
+                         src={contract.documenturl} // replace with contract.documentUrl if available
+                         title="Document"
+                         className="w-full h-full"
+                       />
+                     </div>
+                   </DialogContent>
+                 </Dialog>
         
                 {/* Signer Table */}
                 <table className="min-w-full text-sm border-t border-gray-700">

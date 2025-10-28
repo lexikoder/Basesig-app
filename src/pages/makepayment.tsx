@@ -77,15 +77,10 @@ export default function MakepaymentPage() {
     <>
     
    <div className="min-h-screen bg-[#0f0f0f] text-white p-6 ">
-  <div className="max-w-6xl mx-auto bg-[#1a1a1a] border border-gray-700 rounded-lg p-6 ">
-    <h2 className="text-xl font-semibold mb-6">Contract financing application</h2>
-    
   
 
-  </div>
-
    <div className="max-w-6xl mx-auto bg-[#1a1a1a] border border-gray-700 rounded-lg p-6 ">
-    <h2 className="text-xl font-semibold mb-6">Contract Financing Request</h2>
+    <h2 className="text-xl font-semibold mb-6">Refund Payment</h2>
     <div className="overflow-x-auto">
       <table className="min-w-full border-collapse text-sm">
         <thead>
