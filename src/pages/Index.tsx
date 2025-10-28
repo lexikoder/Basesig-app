@@ -154,7 +154,7 @@ export default function Signup() {
             <div>Go to login page and login with this </div>
           <div>Test Email: uzorifeanyi123@gmail.com</div>
           <div>password: 10111011</div>
-          <div>Test Email: uzorifeanyi1011@gmail.com</div>
+          <div>Test Email: lexi123@gmail.com</div>
           <div>password: 10111011</div>
             <Button
               type="submit" 

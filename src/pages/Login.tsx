@@ -96,7 +96,7 @@ export default function LoginPage() {
           {/* Login Button */}
           <div>Test Email: uzorifeanyi123@gmail.com</div>
           <div>password: 10111011</div>
-          <div>Test Email: uzorifeanyi1011@gmail.com</div>
+          <div>Test Email: lexi123@gmail.com</div>
           <div>password: 10111011</div>
           <Button
             onClick={handleLogin}
