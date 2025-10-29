@@ -91,7 +91,12 @@ export default function Signup() {
       <div className="bg-[#0f0f0f] flex flex-col justify-center items-center text-white px-6">
         <div className="w-full max-w-sm space-y-6">
           {/* Logo placeholder */}
+           <div className="text-orange-400 font-bold">
+  First login/signup may be delayed up to 50s due to the free-tier backend deployment
+</div>
+
           <div className="flex justify-center">
+           
           <div className="flex items-center space-x-2 mb-6">
             <div className="w-6 h-6 bg-gradient-to-r from-pink-500 to-orange-500 rounded-lg"></div>
             <h1 className="text-xl font-semibold">Basesig</h1>

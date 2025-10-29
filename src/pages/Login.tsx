@@ -50,9 +50,14 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen grid grid-cols-1 md:grid-cols-2">
       {/* LEFT SIDE */}
+      
       <div className="bg-[#0f0f0f] flex flex-col justify-center items-center text-white px-6">
+        <div className="text-orange-400 font-bold">
+  First login/signup may be delayed up to 50s due to the free-tier backend deployment
+</div>
         <div className="w-full max-w-sm space-y-8">
           {/* Logo */}
+          
           <div className="flex justify-center items-center space-x-2 mb-6">
             <div className="w-6 h-6 bg-gradient-to-r from-pink-500 to-orange-500 rounded-lg"></div>
             <h1 className="text-xl font-semibold">Basesig</h1>
@@ -109,7 +114,7 @@ export default function LoginPage() {
           <p className="text-gray-400 text-sm text-center">
             Don’t have an account?{" "}
             <button
-              onClick={() => navigate("/signup")}
+              onClick={() => navigate("/")}
               className="text-blue-400 hover:underline"
             >
               Sign up
