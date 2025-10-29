@@ -11,7 +11,11 @@ import { DataTypedocs } from "./types/types";
 interface ContractContextType {
   selectedContract: DataTypedocs[]; // <-- now it's an array
   setSelectedContract: React.Dispatch<React.SetStateAction<DataTypedocs[]>>;
+
+  userdetails:string
+  setuserdetails: React.Dispatch<React.SetStateAction<string>>;
 }
+
 
 // ✅ Create the context with a default value
 const ContractContext = createContext<ContractContextType | undefined>(undefined);
@@ -19,9 +23,10 @@ const ContractContext = createContext<ContractContextType | undefined>(undefined
 // ✅ Create the provider
 export const ContractProvider = ({ children }: { children: ReactNode }) => {
   const [selectedContract, setSelectedContract] = useState<DataTypedocs[]>([]);
+  const [userdetails, setuserdetails] = useState<string>();
 
   return (
-    <ContractContext.Provider value={{ selectedContract, setSelectedContract }}>
+    <ContractContext.Provider value={{ selectedContract, setSelectedContract,userdetails, setuserdetails }}>
       {children}
     </ContractContext.Provider>
   );

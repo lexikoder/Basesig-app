@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, Outlet, useNavigate } from "react-router-dom";
 import { LogOut } from "lucide-react";
 import {  useLocation } from "react-router-dom";
@@ -11,6 +11,7 @@ import {
   HandCoins,
 } from "lucide-react";
 import axios from "axios";
+import { useContract } from "@/context";
 
 export default function DashboardLayout() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -23,8 +24,48 @@ export default function DashboardLayout() {
     { name: "Financed Contracts", path: "/dashboard/financed-contract", icon: <FileCheck size={18} /> },
     // { name: "Refund Payment", path: "/dashboard/make-payment", icon: <DollarSign size={18} /> },
   ];
-  
+  //  const [loading, setLoading] = useState(true);
   const location = useLocation();
+   const [users, setUsers] = useState<string>();
+    const [loading, setLoading] = useState(true);
+
+   useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/auth/getuserinfo`, {
+          withCredentials: true, // 👈 if backend sends cookies
+        });
+       
+        
+     
+        setUsers(res.data.data.name);
+        
+      } catch (error) {
+        console.error("Error fetching users:", error);
+      } finally {
+         setLoading(false);
+      }
+    };
+
+    fetchUsers();
+  }, []);
+
+ if (loading)
+  return (
+    <div className="flex justify-center items-center h-screen bg-[#0a0a0a]">
+      <div className="relative">
+        {/* Gradient Ring */}
+        <div className="w-12 h-12 rounded-full border-4 border-transparent border-t-pink-500 border-r-orange-400 animate-spin"></div>
+
+        {/* Center Glow or Text */}
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="w-8 h-8 rounded-full bg-gradient-to-r from-pink-500 to-orange-400 flex items-center justify-center text-white font-bold text-xs">
+            ⚡
+          </div>
+        </div>
+      </div>
+    </div>
+  );
   const handleSign = async() => {
         //  
           // console.log("Signing onchain with:", { file, email, expiration });
@@ -91,7 +132,7 @@ export default function DashboardLayout() {
               className="flex items-center space-x-2 bg-[#1a1a1a] px-4 py-2 rounded-full border border-gray-700 hover:border-pink-500 transition"
             >
               <div className="w-8 h-8 rounded-full bg-gradient-to-r from-pink-500 to-orange-400 text-white flex items-center justify-center text-sm font-bold">
-                UZ
+             {users.split(" ").map(name => name[0]).join("").toUpperCase()}
               </div>
             </button>
 

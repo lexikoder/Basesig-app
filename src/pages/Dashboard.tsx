@@ -78,12 +78,12 @@ interface DataType {
 // }
 
 export default function Dashboard() {
-    const [dropdownOpen, setDropdownOpen] = useState(false);
-    const navigate = useNavigate()
-    const [showAll, setShowAll] = useState(false);
-     const [open, setOpen] = useState(false);
-     const [copied, setCopied] = useState(null);
-     const account = useAccount()
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const navigate = useNavigate()
+  const [showAll, setShowAll] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [copied, setCopied] = useState(null);
+  const account = useAccount()
   const { connectors, connect, status, error } = useConnect()
   const { disconnect } = useDisconnect()
   const {isConnected} = useAccount()
@@ -91,6 +91,7 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [docs, setDocs] = useState<DataTypedocs[]>([]);
   const { setSelectedContract } = useContract();
+   const { setuserdetails } = useContract();
   const [activities, setactivities] = useState<DataType[]>([]);
   const shortenAddress = (addr: string) => {
     if (!addr){
@@ -116,6 +117,7 @@ export default function Dashboard() {
         console.log(res.data.data)
         console.log(res2.data.data)
         setUsers(res.data.data.name);
+        setuserdetails(res.data.data.name)
         setactivities(res2.data.data)
         setDocs(res3.data.data)
         console.log(res3.data.data)
